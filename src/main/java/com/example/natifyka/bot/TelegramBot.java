@@ -60,7 +60,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             }
             switch (messageText){
                 case "/start":
-                    if (subscriberService.saveEmptySubscriber(update.getMessage().getFrom().getId())) {
+                    if (subscriberService.saveEmptySubscriber(userId, chatId)) {
                         sendMessage(chatId, "Вы подписались!\nВведите команду /help.");
                         break;
                     }
@@ -101,7 +101,8 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     }
 
-    private void sendMessage(Long chatId, String textToSend){
+    //todo вынести в отдельный компонент
+    public void sendMessage(Long chatId, String textToSend){
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(String.valueOf(chatId));
         sendMessage.setText(textToSend);

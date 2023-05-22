@@ -22,11 +22,11 @@ public class SubscriberService {
         subscriberRepository.save(subscriber);
     }
 
-    public boolean saveEmptySubscriber(Long id){
+    public boolean saveEmptySubscriber(Long id, Long chatId){
         if (subscriberRepository.existsById(id)){
             return false;
         }
-        Subscriber sub = Subscriber.builder().id(id).isActive(false).build();
+        Subscriber sub = Subscriber.builder().id(id).chatId(chatId).isActive(false).build();
         subscriberRepository.save(sub);
         return true;
     }

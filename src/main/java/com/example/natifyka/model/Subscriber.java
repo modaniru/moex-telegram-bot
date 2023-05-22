@@ -17,6 +17,7 @@ import java.util.List;
 public class Subscriber {
     @Id
     private Long id;
+    private Long chatId;
     private boolean isActive;
     @OneToMany(mappedBy = "subscriber")
     private List<Paper> papers;

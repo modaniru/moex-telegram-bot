@@ -45,11 +45,7 @@ public class PaperService {
                 .security(args[4])
                 .coefficient(coeff).build();
         int value;
-        try {
-            value = queries.getYesterdayAvgTrades(paper, date);
-        } catch (JsonProcessingException e) {
-            return false;
-        }
+        value = queries.getYesterdayAvgTrades(paper, date);
         paper.setObservedCount((long) (value * coeff));
         paper.setSubscriber(subscriberService.getById(subscriberId));
         paperRepository.save(paper);
@@ -70,5 +66,8 @@ public class PaperService {
 
     public List<Paper> getAllPapersById(Long id) {
         return paperRepository.findAllBySubscriberId(id);
+    }
+    public List<Paper> getAll(){
+        return paperRepository.findAll();
     }
 }
