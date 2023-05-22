@@ -14,34 +14,30 @@ public class SubscriberService {
         this.subscriberRepository = subscriberRepository;
     }
 
-    public Subscriber getById(Long id){
+    public Subscriber getById(Long id) {
         return subscriberRepository.findById(id).orElseThrow(IllegalArgumentException::new);
     }
 
-    public void saveSubscriber(Subscriber subscriber){
-        subscriberRepository.save(subscriber);
-    }
-
-    public boolean saveEmptySubscriber(Long id, Long chatId){
-        if (subscriberRepository.existsById(id)){
+    public boolean saveEmptySubscriber(Long id, Long chatId) {
+        if (subscriberRepository.existsById(id)) {
             return false;
         }
-        Subscriber sub = Subscriber.builder().id(id).chatId(chatId).isActive(false).build();
+        Subscriber sub = Subscriber.builder().id(id).chatId(chatId).active(false).build();
         subscriberRepository.save(sub);
         return true;
     }
 
-    public boolean userExists(Long id){
+    public boolean userExists(Long id) {
         return subscriberRepository.existsById(id);
     }
 
-    public void setTrueActive(Long id){
+    public void setTrueActive(Long id) {
         Subscriber subscriber = subscriberRepository.findById(id).orElseThrow(IllegalArgumentException::new);
         subscriber.setActive(true);
         subscriberRepository.save(subscriber);
     }
 
-    public void setFalseActive(Long id){
+    public void setFalseActive(Long id) {
         Subscriber subscriber = subscriberRepository.findById(id).orElseThrow(IllegalArgumentException::new);
         subscriber.setActive(false);
         subscriberRepository.save(subscriber);

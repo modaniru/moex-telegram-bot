@@ -15,23 +15,24 @@ import java.util.Date;
 public class Paper {
     @Id
     @GeneratedValue
-    private Long id;
+    private long id;
     private String engine;
     private String market;
     private String boardGroups;
     private String security;
-    private Long observedCount;
-    private Double coefficient;
+    private long observedCount;
+    private double coefficient;
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private Subscriber subscriber;
 
-    public String getDescription(){
-        return id + ".\nengine: " + engine +
-                "\nmarket: " + market +
-                "\nboard groups: " + boardGroups +
-                "\nsecurity: " + security +
-                "\nobserved count: " + observedCount +
-                "\ncoefficient: " + coefficient + "\n";
+    public String getDescription() {
+        return "Идентификатор: " + id +
+                "\nEngine: " + engine +
+                "\nMarket: " + market +
+                "\nBoard: " + boardGroups +
+                "\nSecurity: " + security +
+                "\nObserved value: " + observedCount +
+                "\nCoefficient: " + coefficient + "\n\n";
     }
 }

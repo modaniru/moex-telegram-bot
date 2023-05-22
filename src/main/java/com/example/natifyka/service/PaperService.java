@@ -25,16 +25,20 @@ public class PaperService {
         this.queries = queries;
     }
 
+    public List<Paper> getAllPaperWithActiveUser() {
+        return paperRepository.findAllBySubscriberActive(true);
+    }
+
 
     public boolean savePaper(String text, Long subscriberId) {
         String[] args = text.split(" ");
         if (args.length != 7) return false;
         double coeff = 0;
         LocalDate date;
+        //check args
         try {
             coeff = Double.parseDouble(args[6]);
             date = LocalDate.parse(args[5]);
-
         } catch (Exception e) {
             return false;
         }
@@ -44,8 +48,11 @@ public class PaperService {
                 .boardGroups(args[3])
                 .security(args[4])
                 .coefficient(coeff).build();
-        int value;
-        value = queries.getYesterdayAvgTrades(paper, date);
+        //take the observed number
+        int value = queries.getYesterdayAvgTrades(paper, date);
+        if (value < 0) {
+            return false;
+        }
         paper.setObservedCount((long) (value * coeff));
         paper.setSubscriber(subscriberService.getById(subscriberId));
         paperRepository.save(paper);
@@ -57,7 +64,10 @@ public class PaperService {
         String[] args = text.split(" ");
         if (args.length != 2) return false;
         try {
-            paperRepository.deleteBySubscriberIdAndId(subscriberId, Long.parseLong(args[1]));
+            Long res = paperRepository.deleteBySubscriberIdAndId(subscriberId, Long.parseLong(args[1]));
+            if (res == 0) {
+                return false;
+            }
         } catch (NumberFormatException e) {
             return false;
         }
@@ -66,8 +76,5 @@ public class PaperService {
 
     public List<Paper> getAllPapersById(Long id) {
         return paperRepository.findAllBySubscriberId(id);
-    }
-    public List<Paper> getAll(){
-        return paperRepository.findAll();
     }
 }

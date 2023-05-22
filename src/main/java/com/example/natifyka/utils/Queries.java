@@ -16,47 +16,47 @@ public class Queries {
     RestTemplate restTemplate = new RestTemplate();
     ObjectMapper objectMapper = new ObjectMapper();
 
-    public Integer getYesterdayAvgTrades(Paper paper, LocalDate date){
-        String getTrades =
-                "https://iss.moex.com/iss/engines/" + paper.getEngine() +
-                        "/markets/" + paper.getMarket() +
-                        "/boardgroups/" + paper.getBoardGroups() +
-                        "/securities/" + paper.getSecurity() +
-                        "/candles.jsonp?from=" + date + "&interval=" + 1 + "&till=" + date;
-
+    public Integer getYesterdayAvgTrades(Paper paper, LocalDate date) {
+        String uri = new StringBuilder("https://iss.moex.com/iss/engines/")
+                .append(paper.getEngine())
+                .append("/markets/").append(paper.getMarket())
+                .append("/boardgroups/").append(paper.getBoardGroups())
+                .append("/securities/").append(paper.getSecurity())
+                .append("/candles.jsonp?from=").append(date)
+                .append("&interval=1&till=").append(date).toString();
         JsonNode root = null;
         final int index;
         ArrayList<ArrayList<Object>> arr = null;
         try {
-            root = getRootNode(getTrades, "candles");
+            root = getRootNode(uri, "candles");
             index = getIndexFromColumn(root, "volume");
             arr = objectMapper.readValue(root.get("data").toString(), ArrayList.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            return -1;
         }
         int sum = arr.stream().mapToInt(a -> (int) a.get(index)).sum();
+        if(arr.size() == 0) return -1;
         return sum / arr.size();
     }
 
     public int getTradesCount(Paper paper) {
-        String getTrade =
-                "https://iss.moex.com/iss/engines/" + paper.getEngine() +
-                        "/markets/" + paper.getMarket() +
-                        "/boardgroups/" + paper.getBoardGroups() +
-                        "/securities/" + paper.getSecurity() +
-                        ".jsonp";
+        String uri = new StringBuilder("https://iss.moex.com/iss/engines/")
+                .append(paper.getEngine())
+                .append("/markets/").append(paper.getMarket())
+                .append("/boardgroups/").append(paper.getBoardGroups())
+                .append("/securities/").append(paper.getSecurity())
+                .append(".jsonp").toString();
         JsonNode root = null;
         final int index;
         ArrayList<ArrayList<Object>> arr = null;
         try {
-            root = getRootNode(getTrade, "marketdata");
+            root = getRootNode(uri, "marketdata");
             index = getIndexFromColumn(root, "NUMTRADES");
             arr = objectMapper.readValue(root.get("data").toString(), ArrayList.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            return -1;
         }
-        int trades = arr.stream().map(a -> (int) a.get(index)).toList().get(0);
-        return trades;
+        return arr.stream().map(a -> (int) a.get(index)).toList().get(0);
     }
 
     private int getIndexFromColumn(JsonNode root, String name) throws JsonProcessingException {

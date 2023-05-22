@@ -16,9 +16,18 @@ import java.util.List;
 @NoArgsConstructor
 public class Subscriber {
     @Id
-    private Long id;
-    private Long chatId;
-    private boolean isActive;
+    private long id;
+    private long chatId;
+    private boolean active;
     @OneToMany(mappedBy = "subscriber")
     private List<Paper> papers;
+
+    @Override
+    public String toString() {
+        return "Subscriber{" +
+                "id=" + id +
+                ", chatId=" + chatId +
+                ", active=" + active +
+                '}';
+    }
 }
