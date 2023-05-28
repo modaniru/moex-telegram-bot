@@ -6,6 +6,8 @@ import com.example.natifyka.utils.Queries;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -30,14 +32,16 @@ public class ObserverService extends Thread {
     public void run() {
         while (true) {
             List<Paper> papers = paperService.getAllPaperWithActiveUser();
-            for (Paper paper : papers) {
-                System.out.println(paper);
-                int tradesCount = queries.getTradesCount(paper);
-                if (tradesCount > paper.getObservedCount()) {
-                    telegramBot.sendMessage(paper.getSubscriber().getChatId(), "❗\uFE0F❗\uFE0F❗\uFE0F\n" +
-                            "Бумага: " + paper.getSecurity() + " (" + paper.getId() + ")\n" +
-                            "Превысила объем сделок (" + paper.getObservedCount() + ") -> " + tradesCount +"\n" +
-                            "❗\uFE0F❗\uFE0F❗\uFE0F");
+            DayOfWeek dayOfWeek = LocalDate.now().getDayOfWeek();
+            if (!dayOfWeek.equals(DayOfWeek.SATURDAY) && !dayOfWeek.equals(DayOfWeek.SUNDAY)) {
+                for (Paper paper : papers) {
+                    int tradesCount = queries.getTradesCount(paper);
+                    if (tradesCount > paper.getObservedCount()) {
+                        telegramBot.sendMessage(paper.getSubscriber().getChatId(), "❗\uFE0F❗\uFE0F❗\uFE0F\n" +
+                                "Бумага: " + paper.getSecurity() + " (" + paper.getId() + ")\n" +
+                                "Превысила объем сделок (" + paper.getObservedCount() + ") -> " + tradesCount + "\n" +
+                                "❗\uFE0F❗\uFE0F❗\uFE0F");
+                    }
                 }
             }
             try {
